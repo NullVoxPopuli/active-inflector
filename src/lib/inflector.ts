@@ -282,7 +282,7 @@ export class Inflector {
   inflect(
     word: string | number,
     typeRules: [string | RegExp, string][],
-    irregular: Record<string, string>,
+    irregular: { [rule: string]: string },
   ) {
     let inflection,
       substitution,
@@ -313,7 +313,7 @@ export class Inflector {
     }
 
     isUncountable =
-      this.rules.uncountable[lowercase] || this.rules.uncountable[lastWord];
+      this.rules.uncountable[lowercase] || (lastWord && this.rules.uncountable[lastWord]);
 
     if (isUncountable) {
       return word;
@@ -323,7 +323,9 @@ export class Inflector {
       if (lowercase.match(rule + "$")) {
         substitution = irregular[rule];
 
-        if (isCamelized && irregular[lastWord]) {
+        if (!substitution) continue;
+
+        if (isCamelized && lastWord && irregular[lastWord]) {
           substitution = capitalize(substitution);
           rule = capitalize(rule);
         }
@@ -336,6 +338,8 @@ export class Inflector {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       inflection = typeRules[i - 1]!;
       rule = inflection[0];
+
+      if (!(rule instanceof RegExp)) continue;
 
       if (rule.test(word)) {
         break;
