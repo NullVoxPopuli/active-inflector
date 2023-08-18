@@ -22,8 +22,7 @@ pnpm add active-inflector
 All methods are always available from the `active-inflector` module:
 
 ```javascript
-import { Inflector } from "active-inflector";
-import { singularize, pluralize } from "active-inflector";
+import { Inflector, singularize, pluralize } from "active-inflector";
 
 Inflector.inflector.singularize("tacos"); // taco
 Inflector.inflector.pluralize("taco"); // tacos
