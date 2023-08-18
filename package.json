@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.7.1",
+    "@changesets/cli": "^2.26.2",
     "@nullvoxpopuli/eslint-configs": "^3.2.0",
     "@tsconfig/esm": "^1.0.4",
     "@tsconfig/strictest": "^2.0.1",
