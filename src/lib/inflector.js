@@ -1,4 +1,5 @@
-import { capitalize } from '@ember/string';
+import { capitalCase as capitalize } from 'capital-case';
+
 import defaultRules from "./inflections";
 
 const BLANK_REGEX = /^\s*$/;
@@ -117,6 +118,7 @@ function makeDictionary() {
   var cache = Object.create(null);
   cache['_dict'] = null;
   delete cache['_dict'];
+
   return cache;
 }
 
@@ -134,12 +136,14 @@ Inflector.prototype = {
 
     this.singularize = function(word) {
       this._cacheUsed = true;
+
       return this._sCache[word] || (this._sCache[word] = this._singularize(word));
     };
 
     this.pluralize = function(numberOrWord, word, options = {}) {
       this._cacheUsed = true;
       var cacheKey = [numberOrWord, word, options.withoutCount]
+
       return this._pCache[cacheKey] || (this._pCache[cacheKey] = this._pluralize(numberOrWord, word, options));
     };
   },
@@ -164,6 +168,7 @@ Inflector.prototype = {
   disableCache() {
     this._sCache = null;
     this._pCache = null;
+
     this.singularize = function(word) {
       return this._singularize(word);
     };
@@ -180,6 +185,7 @@ Inflector.prototype = {
   */
   plural(regex, string) {
     if (this._cacheUsed) { this.purgeCache(); }
+
     this.rules.plurals.push([regex, string.toLowerCase()]);
   },
 
@@ -190,6 +196,7 @@ Inflector.prototype = {
   */
   singular(regex, string) {
     if (this._cacheUsed) { this.purgeCache(); }
+
     this.rules.singular.push([regex, string.toLowerCase()]);
   },
 
@@ -199,6 +206,7 @@ Inflector.prototype = {
   */
   uncountable(string) {
     if (this._cacheUsed) { this.purgeCache(); }
+
     loadUncountable(this.rules, [string.toLowerCase()]);
   },
 
@@ -209,6 +217,7 @@ Inflector.prototype = {
   */
   irregular(singular, plural) {
     if (this._cacheUsed) { this.purgeCache(); }
+
     loadIrregular(this.rules, [[singular, plural]]);
   },
 

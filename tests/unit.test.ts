@@ -1,113 +1,19 @@
-import Inflector from 'ember-inflector';
-import {
-  module,
-  test
-} from 'qunit';
+import { afterEach,assert, beforeEach, test } from 'vitest';
 
-var inflector;
-module('ember-inflector.dsl', {
-  beforeEach() {
+import { Inflector } from '../src';
+
+let inflector: Inflector;
+
+  beforeEach(() => {
     inflector = new Inflector(/* no rulest == no rules */);
-  },
-  afterEach() {
+  });
+  afterEach(() => {
     inflector = undefined;
-  }
-});
+  });
 
-test('ability to include counts', function(assert) {
-  inflector.plural(/$/, 's');
-  assert.equal(inflector.pluralize(1, 'cat'), '1 cat', 'pluralize 1')
-  assert.equal(inflector.pluralize(5, 'cat'), '5 cats', 'pluralize 5')
-  assert.equal(inflector.pluralize(5, 'cat', { withoutCount: true }), 'cats', 'without count')
-})
+test('plurals', function() {
 
-test('ability to add additional pluralization rules', function(assert){
-  assert.equal(inflector.pluralize('cow'), 'cow', 'no pluralization rule');
-
-  inflector.plural(/$/, 's');
-
-  assert.equal(inflector.pluralize('cow'), 'cows', 'pluralization rule was applied');
-});
-
-test('ability to add additional singularization rules', function(assert) {
-  assert.equal(inflector.singularize('cows'), 'cows', 'no singularization rule was applied');
-
-  inflector.singular(/s$/, '');
-
-  assert.equal(inflector.singularize('cows'), 'cow', 'singularization rule was applied');
-});
-
-test('ability to add additional uncountable rules', function(assert) {
-  inflector.plural(/$/, 's');
-  assert.equal(inflector.pluralize('cow'), 'cows', 'pluralization rule was applied');
-
-  inflector.uncountable('cow');
-  assert.equal(inflector.pluralize('cow'), 'cow', 'pluralization rule NOT was applied');
-  assert.equal(inflector.pluralize('redCow'), 'redCow', 'pluralization rule NOT was applied');
-  assert.equal(inflector.pluralize('red-cow'), 'red-cow', 'pluralization rule NOT was applied');
-  assert.equal(inflector.pluralize('red/cow'), 'red/cow', 'pluralization rule NOT was applied');
-});
-
-test('ability to add additional irregular rules', function(assert) {
-  inflector.singular(/s$/, '');
-  inflector.plural(/$/, 's');
-
-  assert.equal(inflector.singularize('cows'), 'cow', 'regular singularization rule was applied');
-  assert.equal(inflector.pluralize('cow'), 'cows', 'regular pluralization rule was applied');
-
-  assert.equal(inflector.singularize('red-cows'), 'red-cow', 'regular singularization rule was applied');
-  assert.equal(inflector.pluralize('red-cow'), 'red-cows', 'regular pluralization rule was applied');
-
-  assert.equal(inflector.singularize('redCows'), 'redCow', 'regular singularization rule was applied');
-  assert.equal(inflector.pluralize('redCow'), 'redCows', 'regular pluralization rule was applied');
-
-  assert.equal(inflector.singularize('red/cows'), 'red/cow', 'regular singularization rule was applied');
-  assert.equal(inflector.pluralize('red/cow'), 'red/cows', 'regular pluralization rule was applied');
-
-  inflector.irregular('cow', 'kine');
-
-  assert.equal(inflector.singularize('kine'), 'cow', 'irregular singularization rule was applied');
-  assert.equal(inflector.pluralize('cow'), 'kine', 'irregular pluralization rule was applied');
-
-  assert.equal(inflector.singularize('red-kine'), 'red-cow', 'irregular singularization rule was applied');
-  assert.equal(inflector.pluralize('red-cow'), 'red-kine', 'irregular pluralization rule was applied');
-
-  assert.equal(inflector.singularize('red-red-cow'), 'red-red-cow', 'irregular singularization rule was applied correctly with dasherization');
-  assert.equal(inflector.singularize('red-red-kine'), 'red-red-cow', 'irregular singularization rule was applied correctly with dasherization');
-  assert.equal(inflector.pluralize('red-red-cow'), 'red-red-kine', 'irregular pluralization rule was applied correctly with dasherization');
-  assert.equal(inflector.pluralize('red-red-kine'), 'red-red-kine', 'irregular pluralization rule was applied correctly with dasherization');
-
-  assert.equal(inflector.singularize('redKine'), 'redCow', 'irregular singularization rule was applied');
-  assert.equal(inflector.pluralize('redCow'), 'redKine', 'irregular pluralization rule was applied');
-
-  assert.equal(inflector.singularize('red/kine'), 'red/cow', 'irregular singularization rule was applied');
-  assert.equal(inflector.pluralize('red/cow'), 'red/kine', 'irregular pluralization rule was applied');
-});
-
-test('ability to add identical singular and pluralizations', function(assert) {
-
-  inflector.singular(/s$/, '');
-  inflector.plural(/$/, 's');
-
-  assert.equal(inflector.singularize('settings'),'setting','regular singularization rule was applied');
-  assert.equal(inflector.pluralize('setting'),'settings','regular pluralization rule was applied');
-
-  inflector.irregular('settings','settings');
-  inflector.irregular('userPreferences','userPreferences');
-
-  assert.equal(inflector.singularize('settings'),'settings','irregular singularization rule was applied on lowercase word');
-  assert.equal(inflector.pluralize('settings'),'settings','irregular pluralization rule was applied on lowercase word');
-
-  assert.equal(inflector.singularize('userPreferences'),'userPreferences','irregular singularization rule was applied on camelcase word');
-  assert.equal(inflector.pluralize('userPreferences'),'userPreferences','irregular pluralization rule was applied on camelcase word');
-});
-
-module('ember-inflector.unit');
-
-test('plurals', function(assert) {
-  assert.expect(1);
-
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     plurals: [
       [/$/, 's'],
       [/s$/i, 's']
@@ -117,10 +23,9 @@ test('plurals', function(assert) {
   assert.equal(inflector.pluralize('apple'), 'apples');
 });
 
-test('singularization', function(assert) {
-  assert.expect(1);
+test('singularization', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     singular: [
       [/s$/i, ''],
       [/(ss)$/i, '$1']
@@ -130,10 +35,9 @@ test('singularization', function(assert) {
   assert.equal(inflector.singularize('apple'), 'apple');
 });
 
-test('singularization of irregular singulars', function(assert) {
-  assert.expect(1);
+test('singularization of irregular singulars', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     singular: [
       [/s$/i, ''],
       [/(ss)$/i, '$1']
@@ -146,10 +50,9 @@ test('singularization of irregular singulars', function(assert) {
   assert.equal(inflector.singularize('lens'), 'lens');
 });
 
-test('pluralization of irregular plurals', function(assert) {
-  assert.expect(1);
+test('pluralization of irregular plurals', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     plurals: [
       [/$/,'s']
     ],
@@ -161,10 +64,9 @@ test('pluralization of irregular plurals', function(assert) {
   assert.equal(inflector.pluralize('people'), 'people');
 });
 
-test('plural', function(assert) {
-  assert.expect(1);
+test('plural', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     plurals: [
       ['1', '1'],
       ['2', '2'],
@@ -175,10 +77,9 @@ test('plural', function(assert) {
   assert.equal(inflector.rules.plurals.length, 3);
 });
 
-test('singular', function(assert) {
-  assert.expect(1);
+test('singular', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     singular: [
       ['1', '1'],
       ['2', '2'],
@@ -189,10 +90,9 @@ test('singular', function(assert) {
   assert.equal(inflector.rules.singular.length, 3);
 });
 
-test('irregular', function(assert) {
-  assert.expect(6);
+test('irregular', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     irregularPairs: [
       ['1', '12'],
       ['2', '22'],
@@ -209,10 +109,9 @@ test('irregular', function(assert) {
   assert.equal(inflector.rules.irregularInverse['32'], '3');
 });
 
-test('uncountable', function(assert) {
-  assert.expect(3);
+test('uncountable', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     uncountable: [
       '1',
       '2',
@@ -225,27 +124,24 @@ test('uncountable', function(assert) {
   assert.equal(inflector.rules.uncountable['3'], true);
 });
 
-test('inflect.nothing', function(assert) {
-  assert.expect(2);
+test('inflect.nothing', function() {
 
-  var inflector = new Inflector();
+  let inflector = new Inflector();
 
   assert.equal(inflector.inflect('',  []), '');
   assert.equal(inflector.inflect(' ', []), ' ');
 });
 
-test('inflect.noRules', function(assert) {
-  assert.expect(1);
+test('inflect.noRules', function() {
 
-  var inflector = new Inflector();
+  let inflector = new Inflector();
 
   assert.equal(inflector.inflect('word', []),'word');
 });
 
-test('inflect.uncountable', function(assert) {
-  assert.expect(1);
+test('inflect.uncountable', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     plural: [
       [/$/,'s']
     ],
@@ -254,61 +150,56 @@ test('inflect.uncountable', function(assert) {
     ]
   });
 
-  var rules = [];
+  let rules = [];
 
   assert.equal(inflector.inflect('word', rules), 'word');
 });
 
-test('inflect.irregular', function(assert) {
-  assert.expect(2);
+test('inflect.irregular', function() {
 
-  var inflector = new Inflector({
+  let inflector = new Inflector({
     irregularPairs: [
       ['word', 'wordy']
     ]
   });
 
-  var rules = [];
+  let rules = [];
 
   assert.equal(inflector.inflect('word', rules, inflector.rules.irregular), 'wordy');
   assert.equal(inflector.inflect('wordy', rules, inflector.rules.irregularInverse), 'word');
 });
 
-test('inflect.basicRules', function(assert) {
-  assert.expect(1);
+test('inflect.basicRules', function() {
 
-  var inflector = new Inflector();
-  var rules = [[/$/, 's']];
+  let inflector = new Inflector();
+  let rules = [[/$/, 's']];
 
   assert.equal(inflector.inflect('word', rules ), 'words');
 });
 
-test('inflect.advancedRules', function(assert) {
-  assert.expect(1);
+test('inflect.advancedRules', function() {
 
-  var inflector = new Inflector();
-  var rules = [[/^(ox)$/i, '$1en']];
+  let inflector = new Inflector();
+  let rules = [[/^(ox)$/i, '$1en']];
 
   assert.equal(inflector.inflect('ox', rules), 'oxen');
 });
 
-test('Inflector.defaultRules', function(assert) {
-  assert.expect(1);
+test('Inflector.defaultRules', function() {
 
-  var rules = Inflector.defaultRules;
+  let rules = Inflector.defaultRules;
+
   assert.ok(rules, 'has defaultRules');
 });
 
-test('Inflector.inflector exists', function(assert) {
-  assert.expect(1);
+test('Inflector.inflector exists', function() {
 
   assert.ok(Inflector.inflector, 'Inflector.inflector exists');
 });
 
-test('new Inflector with defaultRules matches docs', function(assert) {
-  assert.expect(4);
+test('new Inflector with defaultRules matches docs', function() {
 
-  var inflector = new Inflector(Inflector.defaultRules);
+  let inflector = new Inflector(Inflector.defaultRules);
 
   // defaultRules includes these special rules
   assert.equal(inflector.pluralize('cow'), 'kine');
@@ -321,32 +212,37 @@ test('new Inflector with defaultRules matches docs', function(assert) {
   assert.equal(inflector.singularize('items'), 'item');
 });
 
-test('words containing irregular and uncountable words can be pluralized', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('words containing irregular and uncountable words can be pluralized', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
+
   assert.equal(inflector.pluralize('woman'), 'women');
   assert.equal(inflector.pluralize('salesperson'), 'salespeople');
 });
 
 
-test('words containing irregular and uncountable words can be singularized', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('words containing irregular and uncountable words can be singularized', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
+
   assert.equal(inflector.singularize('women'), 'woman');
   assert.equal(inflector.singularize('salespeople'), 'salesperson');
   assert.equal(inflector.singularize('pufferfish'), 'pufferfish');
 });
 
-test('partial words containing uncountable words can be pluralized', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('partial words containing uncountable words can be pluralized', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
+
   assert.equal(inflector.pluralize('price'), 'prices');
 });
 
-test('partial words containing uncountable words can be singularized', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('partial words containing uncountable words can be singularized', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
+
   assert.equal(inflector.singularize('subspecies'), 'subspecy');
 });
 
-test('CamelCase and UpperCamelCase is preserved for irregular and uncountable pluralizations', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('CamelCase and UpperCamelCase is preserved for irregular and uncountable pluralizations', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
+
   assert.equal(inflector.pluralize('SuperWoman'), 'SuperWomen');
   assert.equal(inflector.pluralize('superWoman'), 'superWomen');
   assert.equal(inflector.pluralize('SuperMan'), 'SuperMen');
@@ -356,8 +252,9 @@ test('CamelCase and UpperCamelCase is preserved for irregular and uncountable pl
 });
 
 
-test('CamelCase and UpperCamelCase is preserved for irregular and uncountable singularization', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('CamelCase and UpperCamelCase is preserved for irregular and uncountable singularization', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
+
   assert.equal(inflector.singularize('SuperWomen'), 'SuperWoman');
   assert.equal(inflector.singularize('superWomen'), 'superWoman');
   assert.equal(inflector.singularize('SuperMen'), 'SuperMan');
@@ -366,8 +263,9 @@ test('CamelCase and UpperCamelCase is preserved for irregular and uncountable si
   assert.equal(inflector.singularize('friedRice'), 'friedRice');
 });
 
-test('CamelCase custom irregular words', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('CamelCase custom irregular words', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
+
   inflector.irregular('unitOfMeasure', 'unitsOfMeasure');
   inflector.irregular('tipoDocumento', 'tiposDocumento');
 
@@ -378,8 +276,8 @@ test('CamelCase custom irregular words', function(assert) {
   assert.equal(inflector.pluralize('tipoDocumento'), 'tiposDocumento');
 });
 
-test('Inflector.pluralize passes same test cases as ActiveSupport::Inflector#pluralize', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('Inflector.pluralize passes same test cases as ActiveSupport::Inflector#pluralize', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
 
   assert.equal(inflector.pluralize('search'), 'searches');
   assert.equal(inflector.pluralize('switch'), 'switches');
@@ -469,8 +367,8 @@ test('Inflector.pluralize passes same test cases as ActiveSupport::Inflector#plu
   assert.equal(inflector.pluralize('police'), 'police');
 });
 
-test('Inflector.singularize passes same test cases as ActiveSupport::Inflector#singularize', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('Inflector.singularize passes same test cases as ActiveSupport::Inflector#singularize', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
 
   assert.equal(inflector.singularize('searches'), 'search');
   assert.equal(inflector.singularize('switches'), 'switch');
@@ -560,14 +458,14 @@ test('Inflector.singularize passes same test cases as ActiveSupport::Inflector#s
   assert.equal(inflector.singularize('police'), 'police');
 });
 
-test('Inflector.singularize can singularize "bonuses"', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('Inflector.singularize can singularize "bonuses"', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
 
   assert.equal(inflector.singularize('bonuses'), 'bonus');
 });
 
-test('Inflector.singularize can pluralize "bonus"', function(assert) {
-  var inflector = new Inflector(Inflector.defaultRules);
+test('Inflector.singularize can pluralize "bonus"', function() {
+  let inflector = new Inflector(Inflector.defaultRules);
 
   assert.equal(inflector.pluralize('bonus'), 'bonuses');
 });

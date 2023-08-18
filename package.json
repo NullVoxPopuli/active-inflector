@@ -1,6 +1,7 @@
 {
   "name": "active-inflector",
   "version": "0.0.0",
+  "type": "module",
   "description": "active-inflector goal is to be rails compatible.",
   "keywords": [
     "ember-addon",
@@ -27,6 +28,7 @@
   "scripts": {
     "build": "ember build --environment=production",
     "lint": "turbo lint",
+    "lint:fix": "turbo lint:fix",
     "lint:js": "eslint .",
     "lint:prettier": "prettier --check .",
     "lint:js:fix": "eslint . --fix",
@@ -34,7 +36,7 @@
     "lint:types": "tsc --noEmit",
     "lint:package": "publint",
     "lint:published-types": "attw --pack",
-    "test": "vitest"
+    "test": "vitest --coverage"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.7.1",
@@ -43,11 +45,13 @@
     "@tsconfig/strictest": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
+    "@vitest/coverage-v8": "^0.34.2",
     "eslint": "^8.47.0",
     "prettier": "^3.0.2",
     "publint": "^0.2.0",
     "turbo": "^1.10.12",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vitest": "^0.34.2"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -55,5 +59,8 @@
   "volta": {
     "node": "18.17.1",
     "pnpm": "8.6.12"
+  },
+  "dependencies": {
+    "capital-case": "^1.0.4"
   }
 }
