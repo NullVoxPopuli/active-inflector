@@ -3,7 +3,7 @@ import { capitalCase as capitalize } from "capital-case";
 
 import defaultRules from "./inflections";
 
-import type { RuleSet } from './types';
+import type { RuleSet } from "./types";
 
 const BLANK_REGEX = /^\s*$/;
 const LAST_WORD_DASHED_REGEX = /([\w/-]+[_/\s-])([a-z\d]+$)/;
@@ -19,13 +19,17 @@ function loadUncountable(rules: ResolvedRuleCache, uncountable: string[]) {
   }
 }
 
-interface ResolvedRuleCache extends Omit<RuleSet, 'uncountable' | 'irregularPairs'> {
+interface ResolvedRuleCache
+  extends Omit<RuleSet, "uncountable" | "irregularPairs"> {
   uncountable: { [word: string]: boolean };
   irregular: { [singular: string]: string };
   irregularInverse: { [plural: string]: string };
 }
 
-function loadIrregular(rules: ResolvedRuleCache, irregularPairs: RuleSet['irregularPairs']) {
+function loadIrregular(
+  rules: ResolvedRuleCache,
+  irregularPairs: RuleSet["irregularPairs"],
+) {
   if (!irregularPairs) return;
   if (!Array.isArray(irregularPairs)) return;
 
@@ -39,7 +43,6 @@ function loadIrregular(rules: ResolvedRuleCache, irregularPairs: RuleSet['irregu
     rules.irregularInverse[plural.toLowerCase()] = singular;
   }
 }
-
 
 /**
   Inflector.Ember provides a mechanism for supplying inflection rules for your
@@ -114,7 +117,6 @@ export class Inflector {
   #sCache: { [word: string]: string } | null = null;
   #pCache: { [cacheKey: string]: string } | null = null;
 
-
   constructor(ruleSet?: Partial<RuleSet>) {
     let normalizedRuleSet: Partial<RuleSet> = ruleSet || {};
 
@@ -169,8 +171,8 @@ export class Inflector {
   }
 
   /**
-    * adds to the list of plural rules, clearing the cache
-    */
+   * adds to the list of plural rules, clearing the cache
+   */
   plural(regex: RegExp, string: string) {
     if (this.#cacheUsed) {
       this.purgeCache();
@@ -180,8 +182,8 @@ export class Inflector {
   }
 
   /**
-    * adds to the list of singular rules, clearing the cache
-    */
+   * adds to the list of singular rules, clearing the cache
+   */
   singular(regex: RegExp, string: string) {
     if (this.#cacheUsed) {
       this.purgeCache();
@@ -191,8 +193,8 @@ export class Inflector {
   }
 
   /**
-    * adds to the list of uncountable rules, clearing the cache
-    */
+   * adds to the list of uncountable rules, clearing the cache
+   */
   uncountable(string: string) {
     if (this.#cacheUsed) {
       this.purgeCache();
@@ -202,8 +204,8 @@ export class Inflector {
   }
 
   /**
-    * adds to the list of irregular rules, clearing the cache
-    */
+   * adds to the list of irregular rules, clearing the cache
+   */
   irregular(singular: string, plural: string) {
     if (this.#cacheUsed) {
       this.purgeCache();
@@ -212,21 +214,21 @@ export class Inflector {
     loadIrregular(this.rules, [[singular, plural]]);
   }
 
-   pluralize(word: string): string;
-   pluralize(
+  pluralize(word: string): string;
+  pluralize(
     count: number,
     word: string,
-    options?: { withoutCount?: boolean }
-   ): string;
+    options?: { withoutCount?: boolean },
+  ): string;
   pluralize(...args: unknown[]) {
-    console.log(args, this.#pCache, this.#cacheUsed);
-
-    let [wordOrCount, word, options] = args as [string] | [count: number, word: string, options?: { withoutCount?: boolean }];
+    let [wordOrCount, word, options] = args as
+      | [string]
+      | [count: number, word: string, options?: { withoutCount?: boolean }];
 
     if (this.#pCache) {
       this.#cacheUsed = true;
 
-      let cacheKey = [wordOrCount, word, options?.withoutCount].join('');
+      let cacheKey = [wordOrCount, word, options?.withoutCount].join("");
 
       return (
         this.#pCache[cacheKey] ||
@@ -238,8 +240,11 @@ export class Inflector {
     return this.#pluralize(wordOrCount, word, options);
   }
 
-  #pluralize(wordOrCount: string | number, word?: string, options?: { withoutCount?: boolean }) {
-
+  #pluralize(
+    wordOrCount: string | number,
+    word?: string,
+    options?: { withoutCount?: boolean },
+  ) {
     if (word === undefined) {
       return this.inflect(
         wordOrCount,
@@ -248,7 +253,10 @@ export class Inflector {
       );
     }
 
-    if (typeof wordOrCount === 'number' || parseFloat(wordOrCount) !== 1) {
+    let count =
+      typeof wordOrCount === "number" ? wordOrCount : parseFloat(wordOrCount);
+
+    if (count !== 1) {
       word = this.inflect(word, this.rules.plurals, this.rules.irregular);
     }
 
@@ -271,7 +279,11 @@ export class Inflector {
     return this.inflect(word, this.rules.singular, this.rules.irregularInverse);
   }
 
-  inflect(word: string | number, typeRules: [string | RegExp, string][], irregular: Record<string, string>) {
+  inflect(
+    word: string | number,
+    typeRules: [string | RegExp, string][],
+    irregular: Record<string, string>,
+  ) {
     let inflection,
       substitution,
       result,
@@ -341,7 +353,7 @@ export class Inflector {
   }
 }
 
-function makeDictionary(): {}  {
+function makeDictionary(): {} {
   let cache = Object.create(null);
 
   cache["_dict"] = null;
@@ -349,4 +361,3 @@ function makeDictionary(): {}  {
 
   return cache;
 }
-
