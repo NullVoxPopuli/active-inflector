@@ -313,7 +313,8 @@ export class Inflector {
     }
 
     isUncountable =
-      this.rules.uncountable[lowercase] || (lastWord && this.rules.uncountable[lastWord]);
+      this.rules.uncountable[lowercase] ||
+      (lastWord && this.rules.uncountable[lastWord]);
 
     if (isUncountable) {
       return word;
