@@ -25,8 +25,8 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./declarations/index.d.ts"
+      "types": "./declarations/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "files": [

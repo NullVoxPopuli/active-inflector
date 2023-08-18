@@ -20,7 +20,7 @@
     },
     "lint:prettier": { "outputs": [] },
     "lint:types": { "outputs": [] },
-    "lint:package": { "outputs": [] },
+    "lint:package": { "outputs": [], "dependsOn": ["build"] },
     "lint:published-types": { "outputs": [] },
 
     "lint:fix": {

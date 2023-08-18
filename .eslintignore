@@ -1,5 +1,6 @@
 # compiled output
 dist/
 declarations/
+coverage/
 
 node_modules/
