@@ -1,4 +1,6 @@
-# compiled output
+*.yml
+*.yaml
+
 dist/
 declarations/
 coverage/

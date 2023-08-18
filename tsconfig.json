@@ -1,0 +1,10 @@
+{
+  "extends": ["@tsconfig/esm", "@tsconfig/strictest"],
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationDir": "declarations"
+  }
+}

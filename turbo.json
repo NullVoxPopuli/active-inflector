@@ -1,0 +1,34 @@
+{
+  "baseBranch": "origin/main",
+  // Additive to package.json and turbo.json
+  //
+  // https://turbo.build/repo/docs/core-concepts/caching/file-inputs#specifying-additional-inputs
+  "globalDependencies": ["pnpm-lock.yaml", "patches"],
+  "pipeline": {
+    "build": { "dependsOn": ["build:js", "build:types"] },
+
+    "lint": {
+      "outputs": [],
+      "dependsOn": [
+        "lint:js",
+        "lint:prettier",
+        "lint:types",
+        "lint:package",
+        "lint:published-types"
+      ]
+    },
+    "lint:prettier": { "outputs": [] },
+    "lint:types": { "outputs": [] },
+    "lint:package": { "outputs": [], "dependsOn": ["build"] },
+    "lint:published-types": { "outputs": ["build"] },
+
+    "lint:fix": {
+      "cache": false,
+      "dependsOn": ["lint:js:fix", "lint:prettier:fix"]
+    },
+    // Prettier can alter files too, so let's prevent race conditions for multiple
+    // writing to the same files.
+    "lint:js:fix": { "cache": false },
+    "lint:prettier:fix": { "cache": false, "dependsOn": ["lint:js:fix"] }
+  }
+}
