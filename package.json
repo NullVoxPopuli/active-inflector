@@ -27,8 +27,8 @@
   "author": "NullVoxPopuli",
   "scripts": {
     "build": "ember build --environment=production",
-    "lint": "turbo lint",
-    "lint:fix": "turbo lint:fix",
+    "check": "turbo lint",
+    "fix": "turbo lint:fix",
     "lint:js": "eslint .",
     "lint:prettier": "prettier --check .",
     "lint:js:fix": "eslint . --fix",

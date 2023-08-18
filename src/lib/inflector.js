@@ -1,4 +1,4 @@
-import { capitalCase as capitalize } from 'capital-case';
+import { capitalCase as capitalize } from "capital-case";
 
 import defaultRules from "./inflections";
 
@@ -96,13 +96,13 @@ function Inflector(ruleSet) {
   ruleSet.uncountable = ruleSet.uncountable || makeDictionary();
   ruleSet.irregularPairs = ruleSet.irregularPairs || makeDictionary();
 
-  const rules = this.rules = {
-    plurals:  ruleSet.plurals || [],
+  const rules = (this.rules = {
+    plurals: ruleSet.plurals || [],
     singular: ruleSet.singular || [],
     irregular: makeDictionary(),
     irregularInverse: makeDictionary(),
-    uncountable: makeDictionary()
-  };
+    uncountable: makeDictionary(),
+  });
 
   loadUncountable(rules, ruleSet.uncountable);
   loadIrregular(rules, ruleSet.irregularPairs);
@@ -111,13 +111,15 @@ function Inflector(ruleSet) {
 }
 
 if (!Object.create && !Object.create(null).hasOwnProperty) {
-  throw new Error("This browser does not support Object.create(null), please polyfil with es5-sham: http://git.io/yBU2rg");
+  throw new Error(
+    "This browser does not support Object.create(null), please polyfil with es5-sham: http://git.io/yBU2rg",
+  );
 }
 
 function makeDictionary() {
   var cache = Object.create(null);
-  cache['_dict'] = null;
-  delete cache['_dict'];
+  cache["_dict"] = null;
+  delete cache["_dict"];
 
   return cache;
 }
@@ -134,17 +136,22 @@ Inflector.prototype = {
   enableCache() {
     this.purgeCache();
 
-    this.singularize = function(word) {
+    this.singularize = function (word) {
       this._cacheUsed = true;
 
-      return this._sCache[word] || (this._sCache[word] = this._singularize(word));
+      return (
+        this._sCache[word] || (this._sCache[word] = this._singularize(word))
+      );
     };
 
-    this.pluralize = function(numberOrWord, word, options = {}) {
+    this.pluralize = function (numberOrWord, word, options = {}) {
       this._cacheUsed = true;
-      var cacheKey = [numberOrWord, word, options.withoutCount]
+      var cacheKey = [numberOrWord, word, options.withoutCount];
 
-      return this._pCache[cacheKey] || (this._pCache[cacheKey] = this._pluralize(numberOrWord, word, options));
+      return (
+        this._pCache[cacheKey] ||
+        (this._pCache[cacheKey] = this._pluralize(numberOrWord, word, options))
+      );
     };
   },
 
@@ -169,11 +176,11 @@ Inflector.prototype = {
     this._sCache = null;
     this._pCache = null;
 
-    this.singularize = function(word) {
+    this.singularize = function (word) {
       return this._singularize(word);
     };
 
-    this.pluralize = function() {
+    this.pluralize = function () {
       return this._pluralize(...arguments);
     };
   },
@@ -184,7 +191,9 @@ Inflector.prototype = {
     @param {String} string
   */
   plural(regex, string) {
-    if (this._cacheUsed) { this.purgeCache(); }
+    if (this._cacheUsed) {
+      this.purgeCache();
+    }
 
     this.rules.plurals.push([regex, string.toLowerCase()]);
   },
@@ -195,7 +204,9 @@ Inflector.prototype = {
     @param {String} string
   */
   singular(regex, string) {
-    if (this._cacheUsed) { this.purgeCache(); }
+    if (this._cacheUsed) {
+      this.purgeCache();
+    }
 
     this.rules.singular.push([regex, string.toLowerCase()]);
   },
@@ -205,7 +216,9 @@ Inflector.prototype = {
     @param {String} regex
   */
   uncountable(string) {
-    if (this._cacheUsed) { this.purgeCache(); }
+    if (this._cacheUsed) {
+      this.purgeCache();
+    }
 
     loadUncountable(this.rules, [string.toLowerCase()]);
   },
@@ -216,7 +229,9 @@ Inflector.prototype = {
     @param {String} plural
   */
   irregular(singular, plural) {
-    if (this._cacheUsed) { this.purgeCache(); }
+    if (this._cacheUsed) {
+      this.purgeCache();
+    }
 
     loadIrregular(this.rules, [[singular, plural]]);
   },
@@ -231,7 +246,11 @@ Inflector.prototype = {
 
   _pluralize(wordOrCount, word, options = {}) {
     if (word === undefined) {
-     return this.inflect(wordOrCount, this.rules.plurals, this.rules.irregular);
+      return this.inflect(
+        wordOrCount,
+        this.rules.plurals,
+        this.rules.irregular,
+      );
     }
 
     if (parseFloat(wordOrCount) !== 1) {
@@ -250,7 +269,7 @@ Inflector.prototype = {
   },
 
   _singularize(word) {
-    return this.inflect(word, this.rules.singular,  this.rules.irregularInverse);
+    return this.inflect(word, this.rules.singular, this.rules.irregularInverse);
   },
 
   /**
@@ -262,8 +281,16 @@ Inflector.prototype = {
     @param {Object} irregular
   */
   inflect(word, typeRules, irregular) {
-    let inflection, substitution, result, lowercase, wordSplit,
-      lastWord, isBlank, isCamelized, rule, isUncountable;
+    let inflection,
+      substitution,
+      result,
+      lowercase,
+      wordSplit,
+      lastWord,
+      isBlank,
+      isCamelized,
+      rule,
+      isUncountable;
 
     isBlank = !word || BLANK_REGEX.test(word);
     isCamelized = CAMELIZED_REGEX.test(word);
@@ -273,20 +300,22 @@ Inflector.prototype = {
     }
 
     lowercase = word.toLowerCase();
-    wordSplit = LAST_WORD_DASHED_REGEX.exec(word) || LAST_WORD_CAMELIZED_REGEX.exec(word);
+    wordSplit =
+      LAST_WORD_DASHED_REGEX.exec(word) || LAST_WORD_CAMELIZED_REGEX.exec(word);
 
-    if (wordSplit){
+    if (wordSplit) {
       lastWord = wordSplit[2].toLowerCase();
     }
 
-    isUncountable = this.rules.uncountable[lowercase] || this.rules.uncountable[lastWord];
+    isUncountable =
+      this.rules.uncountable[lowercase] || this.rules.uncountable[lastWord];
 
     if (isUncountable) {
       return word;
     }
 
     for (rule in irregular) {
-      if (lowercase.match(rule+"$")) {
+      if (lowercase.match(rule + "$")) {
         substitution = irregular[rule];
 
         if (isCamelized && irregular[lastWord]) {
@@ -294,12 +323,12 @@ Inflector.prototype = {
           rule = capitalize(rule);
         }
 
-        return word.replace(new RegExp(rule, 'i'), substitution);
+        return word.replace(new RegExp(rule, "i"), substitution);
       }
     }
 
     for (var i = typeRules.length, min = 0; i > min; i--) {
-      inflection = typeRules[i-1];
+      inflection = typeRules[i - 1];
       rule = inflection[0];
 
       if (rule.test(word)) {
@@ -315,7 +344,7 @@ Inflector.prototype = {
     result = word.replace(rule, substitution);
 
     return result;
-  }
+  },
 };
 
 Inflector.defaultRules = defaultRules;
