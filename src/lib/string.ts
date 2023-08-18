@@ -1,4 +1,4 @@
-import Inflector from "./inflector";
+import { Inflector } from "./inflector";
 
 export function pluralize() {
   return Inflector.inflector.pluralize(...arguments);
