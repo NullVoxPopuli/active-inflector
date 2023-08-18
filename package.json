@@ -39,6 +39,7 @@
   "license": "MIT",
   "author": "NullVoxPopuli",
   "scripts": {
+    "release": "changeset publish",
     "start": "pnpm build:js --watch",
     "build:js": "./build.sh",
     "build:types": "tsc --emitDeclarationOnly",
