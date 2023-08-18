@@ -1,6 +1,9 @@
+/* eslint-disable prefer-rest-params */
 import { capitalCase as capitalize } from "capital-case";
 
 import defaultRules from "./inflections";
+
+import type { RuleSet } from './types';
 
 const BLANK_REGEX = /^\s*$/;
 const LAST_WORD_DASHED_REGEX = /([\w/-]+[_/\s-])([a-z\d]+$)/;
@@ -28,6 +31,7 @@ function loadIrregular(rules, irregularPairs) {
     rules.irregularInverse[pair[0].toLowerCase()] = pair[0];
   }
 }
+
 
 /**
   Inflector.Ember provides a mechanism for supplying inflection rules for your
@@ -87,45 +91,46 @@ function loadIrregular(rules, irregularPairs) {
 
   var inflector = new Ember.Inflector(rules);
   ```
-
-  @class Inflector
-  @namespace Ember
 */
-function Inflector(ruleSet) {
-  ruleSet = ruleSet || {};
-  ruleSet.uncountable = ruleSet.uncountable || makeDictionary();
-  ruleSet.irregularPairs = ruleSet.irregularPairs || makeDictionary();
+export class Inflector {
+  static defaultRules = defaultRules;
+  static inflector: Inflector;
 
-  const rules = (this.rules = {
-    plurals: ruleSet.plurals || [],
-    singular: ruleSet.singular || [],
-    irregular: makeDictionary(),
-    irregularInverse: makeDictionary(),
-    uncountable: makeDictionary(),
-  });
+  static {
+    this.inflector = new Inflector(defaultRules);
+  }
 
-  loadUncountable(rules, ruleSet.uncountable);
-  loadIrregular(rules, ruleSet.irregularPairs);
+  declare rules: {
+    plurals: RuleSet['plurals'];
+    singular: RuleSet['singular'];
+    irregular: RuleSet['irregularPairs'];
+    irregularInverse: RuleSet['irregularPairs'];
+    uncountable: RuleSet['uncountable'];
+  };
 
-  this.enableCache();
-}
+  _cacheUsed = false;
+  _sCache: object | null;
+  _pCache: object | null;
 
-if (!Object.create && !Object.create(null).hasOwnProperty) {
-  throw new Error(
-    "This browser does not support Object.create(null), please polyfil with es5-sham: http://git.io/yBU2rg",
-  );
-}
 
-function makeDictionary() {
-  let cache = Object.create(null);
+  constructor(ruleSet: RuleSet) {
+    ruleSet = ruleSet || {};
+    ruleSet.uncountable = ruleSet.uncountable || makeDictionary();
+    ruleSet.irregularPairs = ruleSet.irregularPairs || makeDictionary();
 
-  cache["_dict"] = null;
-  delete cache["_dict"];
+    (this.rules = {
+      plurals: ruleSet.plurals || [],
+      singular: ruleSet.singular || [],
+      irregular: makeDictionary(),
+      irregularInverse: makeDictionary(),
+      uncountable: makeDictionary(),
+    });
 
-  return cache;
-}
+    loadUncountable(this.rules, ruleSet.uncountable);
+    loadIrregular(this.rules, ruleSet.irregularPairs);
 
-Inflector.prototype = {
+    this.enableCache();
+  }
   /**
     @public
 
@@ -155,7 +160,7 @@ Inflector.prototype = {
         (this._pCache[cacheKey] = this._pluralize(numberOrWord, word, options))
       );
     };
-  },
+  }
 
   /**
     @public
@@ -166,7 +171,7 @@ Inflector.prototype = {
     this._cacheUsed = false;
     this._sCache = makeDictionary();
     this._pCache = makeDictionary();
-  },
+  }
 
   /**
     @public
@@ -185,7 +190,7 @@ Inflector.prototype = {
     this.pluralize = function () {
       return this._pluralize(...arguments);
     };
-  },
+  }
 
   /**
     @method plural
@@ -198,7 +203,7 @@ Inflector.prototype = {
     }
 
     this.rules.plurals.push([regex, string.toLowerCase()]);
-  },
+  }
 
   /**
     @method singular
@@ -211,7 +216,7 @@ Inflector.prototype = {
     }
 
     this.rules.singular.push([regex, string.toLowerCase()]);
-  },
+  }
 
   /**
     @method uncountable
@@ -223,7 +228,7 @@ Inflector.prototype = {
     }
 
     loadUncountable(this.rules, [string.toLowerCase()]);
-  },
+  }
 
   /**
     @method irregular
@@ -236,15 +241,18 @@ Inflector.prototype = {
     }
 
     loadIrregular(this.rules, [[singular, plural]]);
-  },
+  }
 
-  /**
-    @method pluralize
-    @param {String} word
-  */
+   pluralize(word: string): string;
+   pluralize(
+    count: number,
+    word: string,
+    options?: { withoutCount?: boolean }
+   ): string;
   pluralize() {
+    // eslint-disable-next-line prefer-rest-params
     return this._pluralize(...arguments);
-  },
+  }
 
   _pluralize(wordOrCount, word, options = {}) {
     if (word === undefined) {
@@ -260,7 +268,7 @@ Inflector.prototype = {
     }
 
     return options.withoutCount ? word : `${wordOrCount} ${word}`;
-  },
+  }
 
   /**
     @method singularize
@@ -268,11 +276,11 @@ Inflector.prototype = {
   */
   singularize(word) {
     return this._singularize(word);
-  },
+  }
 
   _singularize(word) {
     return this.inflect(word, this.rules.singular, this.rules.irregularInverse);
-  },
+  }
 
   /**
     @protected
@@ -346,10 +354,15 @@ Inflector.prototype = {
     result = word.replace(rule, substitution);
 
     return result;
-  },
-};
+  }
+}
 
-Inflector.defaultRules = defaultRules;
-Inflector.inflector = new Inflector(defaultRules);
+function makeDictionary(): object  {
+  let cache = Object.create(null);
 
-export default Inflector;
+  cache["_dict"] = null;
+  delete cache["_dict"];
+
+  return cache;
+}
+

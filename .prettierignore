@@ -1,2 +1,7 @@
 *.yml
 *.yaml
+
+dist/
+declarations/
+
+node_modules/

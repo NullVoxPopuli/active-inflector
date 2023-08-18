@@ -1,4 +1,6 @@
-  export const plurals= [
+import type { RuleSet } from './types';
+
+  export const plurals: RuleSet['plurals'] = [
     [/$/, "s"],
     [/s$/i, "s"],
     [/^(ax|test)is$/i, "$1es"],
@@ -20,9 +22,9 @@
     [/^(ox)$/i, "$1en"],
     [/^(oxen)$/i, "$1"],
     [/(quiz)$/i, "$1zes"],
-  ];
+  ] ;
 
-  export const singular=[
+  export const singular: RuleSet['singular']=[
     [/s$/i, ""],
     [/(ss)$/i, "$1"],
     [/(n)ews$/i, "$1ews"],
@@ -53,9 +55,9 @@
     [/(matr)ices$/i, "$1ix"],
     [/(quiz)zes$/i, "$1"],
     [/(database)s$/i, "$1"],
-  ];
+  ] ;
 
-  export const irregularPairs= [
+  export const irregularPairs: RuleSet['irregularPairs']= [
     ["person", "people"],
     ["man", "men"],
     ["child", "children"],
@@ -63,9 +65,9 @@
     ["move", "moves"],
     ["cow", "kine"],
     ["zombie", "zombies"],
-  ];
+  ] ;
 
-  export const uncountable = [
+  export const uncountable: RuleSet['uncountable'] = [
     "equipment",
     "information",
     "rice",
@@ -76,6 +78,6 @@
     "sheep",
     "jeans",
     "police",
-  ];
+  ] ;
 
 export default { uncountable, irregularPairs, singular, plurals };
