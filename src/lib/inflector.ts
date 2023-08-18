@@ -10,25 +10,33 @@ const LAST_WORD_DASHED_REGEX = /([\w/-]+[_/\s-])([a-z\d]+$)/;
 const LAST_WORD_CAMELIZED_REGEX = /([\w/\s-]+)([A-Z][a-z\d]*$)/;
 const CAMELIZED_REGEX = /[A-Z][a-z\d]*$/;
 
-function loadUncountable(rules, uncountable) {
-  for (let i = 0, length = uncountable.length; i < length; i++) {
-    rules.uncountable[uncountable[i].toLowerCase()] = true;
+function loadUncountable(rules: ResolvedRuleCache, uncountable: string[]) {
+  if (!uncountable) return;
+  if (!Array.isArray(uncountable)) return;
+
+  for (let word of uncountable) {
+    rules.uncountable[word.toLowerCase()] = true;
   }
 }
 
-function loadIrregular(rules, irregularPairs) {
-  let pair;
+interface ResolvedRuleCache extends Omit<RuleSet, 'uncountable' | 'irregularPairs'> {
+  uncountable: { [word: string]: boolean };
+  irregular: { [singular: string]: string };
+  irregularInverse: { [plural: string]: string };
+}
 
-  for (let i = 0, length = irregularPairs.length; i < length; i++) {
-    pair = irregularPairs[i];
+function loadIrregular(rules: ResolvedRuleCache, irregularPairs: RuleSet['irregularPairs']) {
+  if (!irregularPairs) return;
+  if (!Array.isArray(irregularPairs)) return;
 
+  for (let [singular, plural] of irregularPairs) {
     //pluralizing
-    rules.irregular[pair[0].toLowerCase()] = pair[1];
-    rules.irregular[pair[1].toLowerCase()] = pair[1];
+    rules.irregular[singular.toLowerCase()] = plural;
+    rules.irregular[plural.toLowerCase()] = plural;
 
     //singularizing
-    rules.irregularInverse[pair[1].toLowerCase()] = pair[0];
-    rules.irregularInverse[pair[0].toLowerCase()] = pair[0];
+    rules.irregularInverse[singular.toLowerCase()] = singular;
+    rules.irregularInverse[plural.toLowerCase()] = singular;
   }
 }
 
@@ -100,34 +108,29 @@ export class Inflector {
     this.inflector = new Inflector(defaultRules);
   }
 
-  declare rules: {
-    plurals: RuleSet['plurals'];
-    singular: RuleSet['singular'];
-    irregular: RuleSet['irregularPairs'];
-    irregularInverse: RuleSet['irregularPairs'];
-    uncountable: RuleSet['uncountable'];
-  };
+  rules: ResolvedRuleCache;
 
-  _cacheUsed = false;
-  _sCache: object | null;
-  _pCache: object | null;
+  #cacheUsed = false;
+  #sCache: { [word: string]: string } | null = null;
+  #pCache: { [cacheKey: string]: string } | null = null;
 
 
-  constructor(ruleSet: RuleSet) {
-    ruleSet = ruleSet || {};
-    ruleSet.uncountable = ruleSet.uncountable || makeDictionary();
-    ruleSet.irregularPairs = ruleSet.irregularPairs || makeDictionary();
+  constructor(ruleSet?: Partial<RuleSet>) {
+    let normalizedRuleSet: Partial<RuleSet> = ruleSet || {};
 
-    (this.rules = {
-      plurals: ruleSet.plurals || [],
-      singular: ruleSet.singular || [],
+    normalizedRuleSet.uncountable = normalizedRuleSet.uncountable || [];
+    normalizedRuleSet.irregularPairs = normalizedRuleSet.irregularPairs || [];
+
+    this.rules = {
+      plurals: normalizedRuleSet.plurals || [],
+      singular: normalizedRuleSet.singular || [],
       irregular: makeDictionary(),
       irregularInverse: makeDictionary(),
       uncountable: makeDictionary(),
-    });
+    };
 
-    loadUncountable(this.rules, ruleSet.uncountable);
-    loadIrregular(this.rules, ruleSet.irregularPairs);
+    loadUncountable(this.rules, normalizedRuleSet.uncountable);
+    loadIrregular(this.rules, normalizedRuleSet.irregularPairs);
 
     this.enableCache();
   }
@@ -141,25 +144,6 @@ export class Inflector {
   */
   enableCache() {
     this.purgeCache();
-
-    this.singularize = function (word) {
-      this._cacheUsed = true;
-
-      return (
-        this._sCache[word] || (this._sCache[word] = this._singularize(word))
-      );
-    };
-
-    this.pluralize = function (numberOrWord, word, options = {}) {
-      this._cacheUsed = true;
-
-      let cacheKey = [numberOrWord, word, options.withoutCount];
-
-      return (
-        this._pCache[cacheKey] ||
-        (this._pCache[cacheKey] = this._pluralize(numberOrWord, word, options))
-      );
-    };
   }
 
   /**
@@ -168,9 +152,9 @@ export class Inflector {
     @method purgeCache
   */
   purgeCache() {
-    this._cacheUsed = false;
-    this._sCache = makeDictionary();
-    this._pCache = makeDictionary();
+    this.#cacheUsed = false;
+    this.#sCache = makeDictionary();
+    this.#pCache = makeDictionary();
   }
 
   /**
@@ -180,25 +164,15 @@ export class Inflector {
     @method disableCache;
   */
   disableCache() {
-    this._sCache = null;
-    this._pCache = null;
-
-    this.singularize = function (word) {
-      return this._singularize(word);
-    };
-
-    this.pluralize = function () {
-      return this._pluralize(...arguments);
-    };
+    this.#sCache = null;
+    this.#pCache = null;
   }
 
   /**
-    @method plural
-    @param {RegExp} regex
-    @param {String} string
-  */
-  plural(regex, string) {
-    if (this._cacheUsed) {
+    * adds to the list of plural rules, clearing the cache
+    */
+  plural(regex: RegExp, string: string) {
+    if (this.#cacheUsed) {
       this.purgeCache();
     }
 
@@ -206,12 +180,10 @@ export class Inflector {
   }
 
   /**
-    @method singular
-    @param {RegExp} regex
-    @param {String} string
-  */
-  singular(regex, string) {
-    if (this._cacheUsed) {
+    * adds to the list of singular rules, clearing the cache
+    */
+  singular(regex: RegExp, string: string) {
+    if (this.#cacheUsed) {
       this.purgeCache();
     }
 
@@ -219,11 +191,10 @@ export class Inflector {
   }
 
   /**
-    @method uncountable
-    @param {String} regex
-  */
-  uncountable(string) {
-    if (this._cacheUsed) {
+    * adds to the list of uncountable rules, clearing the cache
+    */
+  uncountable(string: string) {
+    if (this.#cacheUsed) {
       this.purgeCache();
     }
 
@@ -231,12 +202,10 @@ export class Inflector {
   }
 
   /**
-    @method irregular
-    @param {String} singular
-    @param {String} plural
-  */
-  irregular(singular, plural) {
-    if (this._cacheUsed) {
+    * adds to the list of irregular rules, clearing the cache
+    */
+  irregular(singular: string, plural: string) {
+    if (this.#cacheUsed) {
       this.purgeCache();
     }
 
@@ -249,12 +218,28 @@ export class Inflector {
     word: string,
     options?: { withoutCount?: boolean }
    ): string;
-  pluralize() {
+  pluralize(...args: unknown[]) {
+    console.log(args, this.#pCache, this.#cacheUsed);
+
+    let [wordOrCount, word, options] = args as [string] | [count: number, word: string, options?: { withoutCount?: boolean }];
+
+    if (this.#pCache) {
+      this.#cacheUsed = true;
+
+      let cacheKey = [wordOrCount, word, options?.withoutCount].join('');
+
+      return (
+        this.#pCache[cacheKey] ||
+        (this.#pCache[cacheKey] = this.#pluralize(wordOrCount, word, options))
+      );
+    }
+
     // eslint-disable-next-line prefer-rest-params
-    return this._pluralize(...arguments);
+    return this.#pluralize(wordOrCount, word, options);
   }
 
-  _pluralize(wordOrCount, word, options = {}) {
+  #pluralize(wordOrCount: string | number, word?: string, options?: { withoutCount?: boolean }) {
+
     if (word === undefined) {
       return this.inflect(
         wordOrCount,
@@ -263,34 +248,30 @@ export class Inflector {
       );
     }
 
-    if (parseFloat(wordOrCount) !== 1) {
+    if (typeof wordOrCount === 'number' || parseFloat(wordOrCount) !== 1) {
       word = this.inflect(word, this.rules.plurals, this.rules.irregular);
     }
 
-    return options.withoutCount ? word : `${wordOrCount} ${word}`;
+    return options?.withoutCount ? word : `${wordOrCount} ${word}`;
   }
 
-  /**
-    @method singularize
-    @param {String} word
-  */
-  singularize(word) {
-    return this._singularize(word);
+  singularize(word: string) {
+    if (this.#sCache) {
+      this.#cacheUsed = true;
+
+      return (
+        this.#sCache[word] || (this.#sCache[word] = this.#singularize(word))
+      );
+    }
+
+    return this.#singularize(word);
   }
 
-  _singularize(word) {
+  #singularize(word: string) {
     return this.inflect(word, this.rules.singular, this.rules.irregularInverse);
   }
 
-  /**
-    @protected
-
-    @method inflect
-    @param {String} word
-    @param {Object} typeRules
-    @param {Object} irregular
-  */
-  inflect(word, typeRules, irregular) {
+  inflect(word: string | number, typeRules: [string | RegExp, string][], irregular: Record<string, string>) {
     let inflection,
       substitution,
       result,
@@ -301,6 +282,8 @@ export class Inflector {
       isCamelized,
       rule,
       isUncountable;
+
+    word = String(word);
 
     isBlank = !word || BLANK_REGEX.test(word);
     isCamelized = CAMELIZED_REGEX.test(word);
@@ -314,7 +297,7 @@ export class Inflector {
       LAST_WORD_DASHED_REGEX.exec(word) || LAST_WORD_CAMELIZED_REGEX.exec(word);
 
     if (wordSplit) {
-      lastWord = wordSplit[2].toLowerCase();
+      lastWord = wordSplit[2]?.toLowerCase();
     }
 
     isUncountable =
@@ -338,7 +321,8 @@ export class Inflector {
     }
 
     for (let i = typeRules.length, min = 0; i > min; i--) {
-      inflection = typeRules[i - 1];
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      inflection = typeRules[i - 1]!;
       rule = inflection[0];
 
       if (rule.test(word)) {
@@ -357,7 +341,7 @@ export class Inflector {
   }
 }
 
-function makeDictionary(): object  {
+function makeDictionary(): {}  {
   let cache = Object.create(null);
 
   cache["_dict"] = null;

@@ -5,9 +5,11 @@ import { Inflector } from "../src";
 let inflector: Inflector;
 
 beforeEach(() => {
-  inflector = new Inflector(/* no rulest == no rules */);
+  inflector = new Inflector(/* no rule set == no rules */);
 });
 afterEach(() => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   inflector = undefined;
 });
 
