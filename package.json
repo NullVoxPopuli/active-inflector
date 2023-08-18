@@ -1,6 +1,6 @@
 {
   "name": "active-inflector",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "active-inflector goal is to be rails compatible.",
   "keywords": [
