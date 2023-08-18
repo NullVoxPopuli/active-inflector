@@ -1,6 +1,7 @@
 *.yml
 *.yaml
 
+.github/
 dist/
 declarations/
 coverage/
