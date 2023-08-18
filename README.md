@@ -1,4 +1,4 @@
-# Active Inflector [![CI](https://github.com/NullVoxPopuli/active-inflector/workflows/CI/badge.svg)](https://github.com/NullVoxPopuli/active-inflector/actions/)
+# Active Inflector [![CI](https://github.com/NullVoxPopuli/active-inflector/workflows/CI/badge.svg)](https://github.com/NullVoxPopuli/active-inflector/actions/) ![size](https://deno.bundlejs.com/badge?q=active-inflector&treeshake=[*]&config={%22compression%22:%22brotli%22,%22esbuild%22:{%22external%22:[%22capital-case%22]}})
 
 Active Inflector is a library for inflecting words between plural and singular forms. Active Inflector aims to be compatible with [ActiveSupport::Inflector](http://api.rubyonrails.org/classes/ActiveSupport/Inflector.html) from Ruby on Rails, including the ability to add your own inflections in your app.
 
