@@ -29,6 +29,9 @@
       "import": "./dist/index.js"
     }
   },
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./declarations/index.d.ts",
   "files": [
     "dist",
     "declarations"
@@ -48,7 +51,7 @@
     "lint:prettier:fix": "prettier --write .",
     "lint:types": "tsc --noEmit",
     "lint:package": "publint",
-    "lint:published-types": "attw --pack",
+    "lint:published-types": "attw --pack --ignore-rules cjs-resolves-to-esm --ignore-rules internal-resolution-error",
     "test": "vitest --coverage"
   },
   "devDependencies": {
