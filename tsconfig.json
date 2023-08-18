@@ -1,3 +1,6 @@
 {
-  "extends": ["@tsconfig/esm", "@tsconfig/strictest"]
+  "extends": ["@tsconfig/esm", "@tsconfig/strictest"],
+  "compilerOptions": {
+    "declarationDir": "declarations"
+  }
 }

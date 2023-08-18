@@ -117,7 +117,8 @@ if (!Object.create && !Object.create(null).hasOwnProperty) {
 }
 
 function makeDictionary() {
-  var cache = Object.create(null);
+  let cache = Object.create(null);
+
   cache["_dict"] = null;
   delete cache["_dict"];
 
@@ -146,7 +147,8 @@ Inflector.prototype = {
 
     this.pluralize = function (numberOrWord, word, options = {}) {
       this._cacheUsed = true;
-      var cacheKey = [numberOrWord, word, options.withoutCount];
+
+      let cacheKey = [numberOrWord, word, options.withoutCount];
 
       return (
         this._pCache[cacheKey] ||
@@ -327,7 +329,7 @@ Inflector.prototype = {
       }
     }
 
-    for (var i = typeRules.length, min = 0; i > min; i--) {
+    for (let i = typeRules.length, min = 0; i > min; i--) {
       inflection = typeRules[i - 1];
       rule = inflection[0];
 

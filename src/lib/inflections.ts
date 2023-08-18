@@ -1,5 +1,4 @@
-export default {
-  plurals: [
+  export const plurals= [
     [/$/, "s"],
     [/s$/i, "s"],
     [/^(ax|test)is$/i, "$1es"],
@@ -21,9 +20,9 @@ export default {
     [/^(ox)$/i, "$1en"],
     [/^(oxen)$/i, "$1"],
     [/(quiz)$/i, "$1zes"],
-  ],
+  ];
 
-  singular: [
+  export const singular=[
     [/s$/i, ""],
     [/(ss)$/i, "$1"],
     [/(n)ews$/i, "$1ews"],
@@ -54,9 +53,9 @@ export default {
     [/(matr)ices$/i, "$1ix"],
     [/(quiz)zes$/i, "$1"],
     [/(database)s$/i, "$1"],
-  ],
+  ];
 
-  irregularPairs: [
+  export const irregularPairs= [
     ["person", "people"],
     ["man", "men"],
     ["child", "children"],
@@ -64,9 +63,9 @@ export default {
     ["move", "moves"],
     ["cow", "kine"],
     ["zombie", "zombies"],
-  ],
+  ];
 
-  uncountable: [
+  export const uncountable = [
     "equipment",
     "information",
     "rice",
@@ -77,5 +76,6 @@ export default {
     "sheep",
     "jeans",
     "police",
-  ],
-};
+  ];
+
+export default { uncountable, irregularPairs, singular, plurals };

@@ -23,10 +23,23 @@
     "type": "git",
     "url": "git://github.com/NullVoxPopuli/active-inflector.git"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./declarations/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "declarations"
+  ],
   "license": "MIT",
   "author": "NullVoxPopuli",
   "scripts": {
-    "build": "ember build --environment=production",
+    "start": "pnpm build:js --watch",
+    "build:js": "./build.sh",
+    "build:types": "tsc --emitDeclarationOnly",
+    "prepack": "pnpm turbo build",
     "check": "turbo lint",
     "fix": "turbo lint:fix",
     "lint:js": "eslint .",
@@ -46,9 +59,11 @@
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
     "@vitest/coverage-v8": "^0.34.2",
+    "esbuild": "^0.19.2",
     "eslint": "^8.47.0",
     "prettier": "^3.0.2",
     "publint": "^0.2.0",
+    "spack": "^1.0.0",
     "turbo": "^1.10.12",
     "typescript": "^5.1.6",
     "vitest": "^0.34.2"

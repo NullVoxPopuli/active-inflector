@@ -1,11 +1,10 @@
 import Inflector from "./inflector";
 
-function pluralize() {
+export function pluralize() {
   return Inflector.inflector.pluralize(...arguments);
 }
 
-function singularize(word) {
+export function singularize(word: string) {
   return Inflector.inflector.singularize(word);
 }
 
-export { pluralize, singularize };
