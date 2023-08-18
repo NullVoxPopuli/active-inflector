@@ -5,11 +5,11 @@ Active Inflector is a library for inflecting words between plural and singular f
 ## Compatibility
 
 Requirements:
+
 - ESM
 - [Private Fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Public_class_fields#browser_compatibility)
 
 As always, a consuming project can run a transpiler over dependencies.
-
 
 ## Installation
 
