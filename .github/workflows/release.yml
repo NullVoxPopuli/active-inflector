@@ -18,9 +18,6 @@ jobs:
       pull-requests: write
     steps:
       - uses: wyvox/action@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm build
       - name: Create Release Pull Request
         uses: changesets/action@v1
         with:
