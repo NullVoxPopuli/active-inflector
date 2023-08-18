@@ -3,6 +3,7 @@
 # compiled output
 /dist/
 /tmp/
+.turbo/
 
 # dependencies
 /bower_components/
@@ -19,7 +20,3 @@
 /testem.log
 /yarn-error.log
 
-# ember-try
-/.node_modules.ember-try/
-/bower.json.ember-try
-/package.json.ember-try

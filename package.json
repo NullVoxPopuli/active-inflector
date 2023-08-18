@@ -31,9 +31,23 @@
     "lint:prettier": "prettier --check .",
     "lint:js:fix": "eslint . --fix",
     "lint:prettier:fix": "prettier --write .",
+    "lint:types": "tsc --noEmit",
+    "lint:package": "publint",
+    "lint:published-types": "attw --pack",
     "test": "vitest"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.7.1",
+    "@nullvoxpopuli/eslint-configs": "^3.2.0",
+    "@tsconfig/esm": "^1.0.4",
+    "@tsconfig/strictest": "^2.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "eslint": "^8.47.0",
+    "prettier": "^3.0.2",
+    "publint": "^0.2.0",
+    "turbo": "^1.10.12",
+    "typescript": "^5.1.6"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
