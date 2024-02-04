@@ -64,7 +64,7 @@
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
     "@vitest/coverage-v8": "^1.0.0",
-    "esbuild": "^0.19.2",
+    "esbuild": "^0.20.0",
     "eslint": "^8.47.0",
     "prettier": "^3.0.2",
     "publint": "^0.2.0",
