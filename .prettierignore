@@ -1,5 +1,6 @@
 *.yml
 *.yaml
+*.md
 
 .github/
 dist/
