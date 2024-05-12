@@ -76,7 +76,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "volta": {
-    "node": "20.12.2",
+    "node": "20.13.1",
     "pnpm": "9.0.6"
   },
   "dependencies": {
