@@ -77,7 +77,7 @@
   },
   "volta": {
     "node": "24.11.1",
-    "pnpm": "10.14.0"
+    "pnpm": "10.24.0"
   },
   "dependencies": {
     "capital-case": "^1.0.4"
