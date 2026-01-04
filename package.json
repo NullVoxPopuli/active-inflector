@@ -55,7 +55,7 @@
     "test": "vitest --coverage"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.13.0",
+    "@arethetypeswrong/cli": "^0.18.0",
     "@changesets/cli": "^2.26.2",
     "@nullvoxpopuli/eslint-configs": "^3.2.0",
     "@tsconfig/esm": "^1.0.4",
@@ -63,10 +63,10 @@
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "@vitest/coverage-v8": "^1.0.0",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.27.0",
     "eslint": "^8.47.0",
     "prettier": "^3.0.2",
-    "publint": "^0.2.0",
+    "publint": "^0.3.0",
     "spack": "^1.0.0",
     "turbo": "^1.10.12",
     "typescript": "^5.1.6",
